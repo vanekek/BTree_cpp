@@ -9,12 +9,12 @@ BTree::Btree() {
 
 }
 
-BTree::BTree(int size, vector<int> arr) {
-    if (arr.size() > node_keys) {
+BTree::BTree(vector<int> arr) {
+    if ((arr.size() > node_keys)) {
         throw EINVARG;
     }
     root = new Node [sizeof(Node)];
-    root->current_size = size;
+    root->current_size = arr.size();
     for (int i = 0; i < arr.size(); ++i) {
         root->keys[i] = arr[i];
     }

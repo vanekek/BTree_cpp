@@ -26,7 +26,7 @@ public:
     };
 
     BTree();
-    BTree(int size, vector<int> arr);
+    BTree(vector<int> arr);
     BTree(const BTree &tree);
     ~Btree();
 
