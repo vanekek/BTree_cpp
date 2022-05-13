@@ -127,10 +127,21 @@ void BTree::delete_from_btree(const int key) {
 
 void BTree::search(const int key) {
     Node *node = get_data();
-    if (node == NULL) {
-        cerr << "Node is NULL." << endl;
-        throw EINVARG;
+    search_in_node(node, key);
+}
+
+BTree & BTree::operator=(const BTree &tree) {
+    delete [] root;
+    root = new Node [sizeof(Node)];
+    root->current_size = tree.root->current_size;
+    root->leaf = tree.root->leaf;
+    for (int i = 0; i < tree.root->current_size; ++i) {
+        root->keys[i] = tree.root->keys[i];
     }
+    return *this;
+}
+
+void BTree::search_in_node(Node *node, const int key) {
     int i = 0;
 	while ((i < node->current_size) && (key > node->keys[i])) {
 		i++;
@@ -146,19 +157,8 @@ void BTree::search(const int key) {
 	} else if (node->leaf == true) {
 		cout << "Key " << key << " wasn't found" << endl;
 	} else {
-		search(node->child[i], key);
+		search_in_node(node->child[i], key);
 	}
-}
-
-BTree & BTree::operator=(const BTree &tree) {
-    delete [] root;
-    root = new Node [sizeof(Node)];
-    root->current_size = tree.root->current_size;
-    root->leaf = tree.root->leaf;
-    for (int i = 0; i < tree.root->current_size; ++i) {
-        root->keys[i] = tree.root->keys[i];
-    }
-    return *this;
 }
 
 int BTree::insert_node(Node *node, const int key) {

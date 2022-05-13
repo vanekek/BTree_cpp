@@ -60,6 +60,8 @@ public:
 		return output;
 	};
 private:
+    void search_in_node(Node *node, const int key);
+
     int insert_node(Node *node, const int key);
     void split_child(Node *parent, const int i);
 
