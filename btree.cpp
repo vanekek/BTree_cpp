@@ -1,8 +1,8 @@
-#include <btree.h>
+#include "btree.h"
 
 using namespace std;
 
-BTree::Btree() {
+BTree::BTree() {
     root = new Node [sizeof(Node)];
     root->current_size = 0;
     root->leaf = true;
@@ -30,6 +30,9 @@ BTree::BTree(const BTree &tree) {
     for (int i = 0; i < old_root->current_size; ++i) {
         root->keys[i] = old_root->keys[i];
     }
+    for (int i = 0; i <= old_root->current_size; ++i) {
+        root->child[i] = old_root->child[i];
+    }
 }
 
 BTree::~BTree() {
@@ -40,6 +43,7 @@ BTree::~BTree() {
 void BTree::key_insert(const int key) {
     if (root->current_size == node_keys) {
 		Node *new_root = new Node [sizeof(Node)];
+        new_root->current_size = 0;
 		new_root->leaf = false;
 		new_root->child[0] = root;
 		root = new_root;
@@ -130,13 +134,31 @@ void BTree::search(const int key) {
     search_in_node(node, key);
 }
 
+void BTree::perform_recursive_equality(const Node &n, Node *node) {
+    node->current_size = n.current_size;
+    node->leaf = n.leaf;
+    for (int i = 0; i < n.current_size; ++i) {
+        node->keys[i] = n.keys[i];
+    }
+    if (n.leaf != true) {
+        
+        for (int i = 0; i <= n.current_size; ++i) {
+            perform_recursive_equality(*n.child[i], node->child[i]);
+        }
+    }
+}
+
 BTree & BTree::operator=(const BTree &tree) {
     delete [] root;
     root = new Node [sizeof(Node)];
-    root->current_size = tree.root->current_size;
-    root->leaf = tree.root->leaf;
-    for (int i = 0; i < tree.root->current_size; ++i) {
-        root->keys[i] = tree.root->keys[i];
+    Node *new_root = tree.get_data();
+    root->leaf = new_root->leaf;
+    root->current_size = new_root->current_size;
+    for (int i = 0; i < new_root->current_size; ++i) {
+        root->keys[i] = new_root->keys[i];
+    }
+    for (int i = 0; i <= new_root->current_size; ++i) {
+        root->child[i] = new_root->child[i];
     }
     return *this;
 }
@@ -162,9 +184,9 @@ void BTree::search_in_node(Node *node, const int key) {
 }
 
 int BTree::insert_node(Node *node, const int key) {
-    int index;
+    int index  = node->current_size;
 
-	for (index = node->current_size; (index > 0) && (key < node->keys[index - 1]); --index) {
+	for (index; (index > 0) && (key < node->keys[index - 1]); --index) {
 		node->keys[index] = node->keys[index - 1];
 		node->child[index + 1] = node->child[index];
 	}
@@ -178,6 +200,7 @@ int BTree::insert_node(Node *node, const int key) {
 
 void BTree::split_child(Node *parent, const int i) {
     if ((i > 5) || (i < 0)) {
+        cerr << "Index is bad." << endl;
         throw EINVARG;
     }
     Node *splitted_node = parent->child[i];

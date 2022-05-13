@@ -28,38 +28,42 @@ public:
     BTree();
     BTree(vector<int> arr);
     BTree(const BTree &tree);
-    ~Btree();
+    ~BTree();
 
     void key_insert(const int key);
     void delete_from_btree(const int key);
     void search(const int key);
 
+    static void perform_recursive_equality(const Node &n, Node *node);
     BTree &operator=(const BTree &tree);
 
     Node *get_data() const { return root; };
 
-    static void perform_recursive_output(std::ostream& output, const Node &n, int ots) {
+    static void perform_recursive_output(std::ostream& output, Node *n, int ots) {
         for (int i = 0; i < ots; i++) {
             output << "\t";
         }
 
-        for (unsigned i = 0; i < n.current_size; i++) {
-            output << n.keys[i] << " ";
+        for (int i = 0; i < n->current_size; i++) {
+            output << n->keys[i] << " ";
         }
         output << endl;
-        if (n.leaf == false) {
+        if (n->leaf == false) {
             ots++;
-            for (unsigned i = 0; i <= n.current_size; i++) {
-                perform_recursive_output(output, *n.child[i], ots);
+            for (int i = 0; i <= n->current_size; i++) {
+                perform_recursive_output(output, n->child[i], ots);
             }
         }
     }
     friend ostream &operator<<(ostream &output, const BTree &tree) {
         Node *n = tree.get_data();
-        perform_recursive_output(output, *n, 2);
+        perform_recursive_output(output, n, 2);
 		return output;
-	};
+	}
+
 private:
+    void create_node(Node *node);
+
     void search_in_node(Node *node, const int key);
 
     int insert_node(Node *node, const int key);
