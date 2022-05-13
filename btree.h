@@ -60,10 +60,8 @@ public:
 		return output;
 	};
 private:
-    void delete_node(Node *node);
-
     int insert_node(Node *node, const int key);
-    void split_child(Node *node, int i);
+    void split_child(Node *parent, const int i);
 
     int delete_from_node(Node *node, int i);                                                        
     int merge_children(Node *parent, int i);

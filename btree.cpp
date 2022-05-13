@@ -143,3 +143,55 @@ void BTree::search(Node *node, const int key) {
 		search(node->child[i], key);
 	}
 }
+
+BTree & BTree::operator=(const BTree &tree) {
+    delete [] root;
+    root = new Node [sizeof(Node)];
+    root->current_size = tree.root->current_size;
+    root->leaf = tree.root->leaf;
+    for (int i = 0; i < tree.root->current_size; ++i) {
+        root->keys[i] = tree.root->keys[i];
+    }
+    return *this;
+}
+
+int BTree::insert_node(Node *node, const int key) {
+    int index;
+
+	for (index = node->current_size; (index > 0) && (key < node->keys[index - 1]); --index) {
+		node->keys[index] = node->keys[index - 1];
+		node->child[index + 1] = node->child[index];
+	}
+
+	node->keys[index] = key;
+	node->child[index + 1] = node->child[index];
+	node->current_size += 1;
+	
+	return index;
+}
+
+void BTree::split_child(Node *parent, const int i) {
+    if ((i > 5) || (i < 0)) {
+        throw EINVARG;
+    }
+    Node *splitted_node = parent->child[i];
+	Node *new_node = new Node [sizeof(Node)];
+	new_node->leaf = splitted_node->leaf;
+	new_node->current_size = node_order - 1;
+
+	for (int k = 0; k < node_order - 1; ++k) {
+		new_node->keys[k] = splitted_node->keys[k + node_order];
+	}
+	if (splitted_node->leaf == false) {
+		for (int j = 0; j < node_order; ++j) {
+			new_node->child[j] = splitted_node->child[j+node_order];
+		}
+	}
+	splitted_node->current_size = node_order - 1;
+
+	insert_node(parent, splitted_node->keys[node_order - 1]); //we are lifting median key to parent//
+	parent->child[i + 1] = new_node;
+}
+
+
+
