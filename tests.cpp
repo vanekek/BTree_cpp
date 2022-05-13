@@ -66,6 +66,60 @@ int main() {
 	check_copy_constructor(*b1);
 	check_copy_constructor(*b2);
 
-    
+    flag = 1;
+    for (const auto& a : data) {
+        try {
+            b2->search(a);
+        } catch(...) {
+            cout << "Test_5." << flag << "\t->\tFAILED" << endl;
+        }
+        cout << "Test_5." << flag << "\t->\tFAILED" << endl;
+        flag += 1;
+    }
 
+    try {
+		b1->delete_from_btree(15);
+	} catch (...) {
+		cout << "Test_6\t->\tFAILED" << endl;
+	}
+	cout << "Test_6\t->\tPASSED" << endl;
+
+    try {
+		b1->delete_from_btree(19);
+	} catch (...) {
+		cout << "Test_7\t->\tFAILED" << endl;
+	}
+	cout << "Test_7\t->\tPASSED" << endl;
+
+    try {
+		b1->delete_from_btree(73);
+	} catch (...) {
+		cout << "Test_6\t->\tFAILED" << endl;
+	}
+	cout << "Test_6\t->\tPASSED" << endl;
+
+    try {
+		b1->delete_from_btree(-24);
+	} catch (...) {
+		cout << "Test_6\t->\tFAILED" << endl;
+	}
+	cout << "Test_6\t->\tPASSED" << endl;
+
+    try {
+		b1->delete_from_btree(-72);
+	} catch (...) {
+		cout << "Test_6\t->\tFAILED" << endl;
+	}
+	cout << "Test_6\t->\tPASSED" << endl;
+
+    try {
+		b1->search(15);
+	} catch (...) {
+		cout << "Test_6\t->\tFAILED" << endl;
+	}
+	cout << "Test_6\t->\tPASSED" << endl;
+
+    delete b1;
+    delete b2;
+    return 0;
 }

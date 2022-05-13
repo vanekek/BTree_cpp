@@ -32,7 +32,7 @@ public:
 
     void key_insert(const int key);
     void delete_from_btree(const int key);
-    void search(Node *node, const int key);
+    void search(const int key);
 
     BTree &operator=(const BTree &tree);
 

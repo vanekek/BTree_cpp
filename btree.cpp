@@ -11,6 +11,7 @@ BTree::Btree() {
 
 BTree::BTree(vector<int> arr) {
     if ((arr.size() > node_keys)) {
+        cerr << "Vector is too long." << endl;
         throw EINVARG;
     }
     root = new Node [sizeof(Node)];
@@ -37,7 +38,6 @@ BTree::~BTree() {
 }
 
 void BTree::key_insert(const int key) {
-
     if (root->current_size == node_keys) {
 		Node *new_root = new Node [sizeof(Node)];
 		new_root->leaf = false;
@@ -108,6 +108,7 @@ void BTree::delete_from_btree(const int key) {
 			return;
 		} else {
 			if (current->leaf == true) {
+                    cerr << "Key was not found in btree." << endl;
 					throw EINVARG;
 			}
 			int modification = check_size(current, i);
@@ -124,7 +125,12 @@ void BTree::delete_from_btree(const int key) {
 	}
 }
 
-void BTree::search(Node *node, const int key) {
+void BTree::search(const int key) {
+    Node *node = get_data();
+    if (node == NULL) {
+        cerr << "Node is NULL." << endl;
+        throw EINVARG;
+    }
     int i = 0;
 	while ((i < node->current_size) && (key > node->keys[i])) {
 		i++;
