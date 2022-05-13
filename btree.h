@@ -1,5 +1,5 @@
-#include <cstring>
 #include <iostream>
+#include <vector>
 
 #define node_order		3  //degree of tree//
 #define node_pointers	(node_order*2)
@@ -26,13 +26,13 @@ public:
     };
 
     BTree();
-    BTree(int size, int arr[]);
+    BTree(int size, vector<int> arr);
     BTree(const BTree &tree);
     ~Btree();
 
     void key_insert(const int key);
     void delete_from_btree(const int key);
-    void search(const int key);
+    void search(Node *node, const int key);
 
     BTree &operator=(const BTree &tree);
 
@@ -62,13 +62,12 @@ public:
 private:
     void delete_node(Node *node);
 
-    int insert_node(Node *node);
+    int insert_node(Node *node, const int key);
     void split_child(Node *node, int i);
 
     int delete_from_node(Node *node, int i);                                                        
     int merge_children(Node *parent, int i);
     int check_size(Node *parent, int i);
-
-
+    //root of btree -- contains all the info//
     Node *root;
 };
