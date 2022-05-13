@@ -193,5 +193,83 @@ void BTree::split_child(Node *parent, const int i) {
 	parent->child[i + 1] = new_node;
 }
 
+int BTree::delete_from_node(Node *node, int i) {
+    node->current_size -= 1;
+	int res = node->keys[i];
+	node->keys[i] = 0;
+
+	for (int j = i; j < node->current_size; ++j) {
+		node->keys[j] = node->keys[j + 1];
+		node->child[j + 1] = node->child[j + 2];
+	}
+
+	return res;
+}
+
+int BTree::merge_children(Node *parent, int i) {
+    if ((parent == NULL) || (i < 0)) {
+        cerr << "Node is NULL or index of child is invalid" << endl;
+        throw EINVARG;
+    }
+
+    Node *left = parent->child[i];
+	Node *right = parent->child[i + 1];
+	
+	left->keys[left->current_size] = delete_from_node(parent, i);
+	left->current_size += 1;
+	int j = left->current_size;
+
+	for (int k = 0; k < right->current_size; ++k) {
+		left->keys[j + k] = right->keys[k];
+		left->child[j + k] = right->child[k];
+	}
+	left->current_size	+= right->current_size;
+	left->child[left->current_size] = right->child[right->current_size];
+
+	delete [] right;
+
+	if (parent->current_size == 0) {
+		root = left;
+		delete [] parent;
+		return 1;
+	}
+
+	return 2;
+}
+////Checking that parent->child[i] has at least NODE_ORDER - 1 keys, if not we change it//
+int BTree::check_size(Node *parent, int i) {
+
+    Node *checked = parent->child[i];
+
+	if (checked->current_size < node_order) {
+		if ((i != 0) && (parent->child[i - 1]->current_size >= node_order)) {
+			Node *left = parent->child[i -1];
+			int k = insert_node(checked, parent->keys[i - 1]);
+			for (k; k != 0; --k) {
+				checked->child[k] = checked->child[k - 1];
+			}
+			checked->child[0] = left->child[left->current_size];
+			parent->keys[i - 1] = delete_from_node(left, left->current_size - 1);
+		}
+		else if ((i != parent->current_size) && (parent->child[i + 1]->current_size >= node_order)) {
+			Node *right = parent->child[i + 1];
+			insert_node(checked, parent->keys[i]);
+			checked->child[checked->current_size] = right->child[0];
+			right->child[0] = right->child[1];
+			parent->keys[i] = delete_from_node(right, 0);
+		}
+		else if (i != 0) {
+			return merge_children(parent, i - 1);
+		}
+		else {
+			return merge_children(parent, i);
+		}
+
+		return 2;
+	}
+
+	return 0;
+}
+
 
 
