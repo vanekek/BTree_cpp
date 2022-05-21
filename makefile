@@ -1,11 +1,11 @@
-CC=g++
-CFLAGS= -Wall -g -fprofile-arcs -ftest-coverage
-all: tests
+FLAGS = -fprofile-arcs -ftest-coverage
+all: a.out
+
+a.out: tests.o btree.o
+	g++ $(FLAGS) btree.o tests.o -o a.out
 tests.o: tests.cpp
-	${CC} -c tests.cpp -o tests.o ${CFLAGS}
+	g++ $(FLAGS) -c tests.cpp -o tests.o
 btree.o: btree.cpp
-	${CC} -c btree.cpp -o btree.o ${CFLAGS}
-tests: tests.o btree.o
-	${CC} btree.o tests.o -o tests ${CFLAGS}
+	g++ $(FLAGS) -c btree.cpp -o btree.o 
 clean:
-	@rm -rf *.o *.gcno *.gcda *.gcov tests 2&>/dev/null
+	rm -rf a.out tests btree *.o *.gcov *.gcda *.gcno 

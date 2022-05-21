@@ -2,22 +2,27 @@
 
 using namespace std;
 
-void check_copy_constructor(BTree b) 
+void check_copy_constructor(BTree<int> b) 
+{
+	cout << b;
+}
+
+void check_copy_constructor_2(BTree<BTree<int>> b)
 {
 	cout << b;
 }
 
 int main() {
 
-    BTree *b1 = NULL;
-    BTree *b2 = NULL;
+    BTree<int> *b1 = NULL;
+    BTree<int> *b2 = NULL;
     vector<int> vec1 = {1, 2, 3, 4};
     vector<int> vec2 = {1, 2, 3, 4, 5, 6, 7};
 
     try {
-        b1 = new BTree(vec2);
-    } catch (const BTree::btree_error& ex) {
-        if (ex == BTree::EINVARG)
+        b1 = new BTree<int>(vec2);
+    } catch (const BTree<int>::btree_error& ex) {
+        if (ex == BTree<int>::EINVARG)
             cout << "Test_0\t->\tPASSED" << endl;
         else 
             cout << "Test_0\t->\tFAILED" << endl;
@@ -26,14 +31,14 @@ int main() {
     }
 
     try {
-		b1 = new BTree(vec1);
+		b1 = new BTree<int>(vec1);
 	} catch (...) {
 		cout << "Test_1\t->\tFAILED" << endl;
 	}
 	cout << "Test_1\t->\tPASSED" << endl;
 
     try {
-		b2 = new BTree();
+		b2 = new BTree<int>();
 	} catch (...) {
 		cout << "Test_2\t->\tFAILED" << endl;
 	}
@@ -121,7 +126,63 @@ int main() {
 	}
 	cout << "Test_11\t->\tPASSED" << endl;
 
+	//Tests for templates//
+
+	BTree< BTree<int> > *b3 = NULL;
+
+	try {
+        b3 = new BTree<BTree<int>>();
+    } catch (...) {
+        cout << "Test_12\t->\tFAILED" << endl;
+    }
+	cout << "Test_12\t->\tPASSED" << endl;
+
+	try {
+        b3->key_insert(*b1);
+    } catch (...) {
+        cout << "Test_13\t->\tFAILED" << endl;
+    }
+	cout << "Test_13\t->\tPASSED" << endl;
+
+	try {
+        b3->key_insert(*b2);
+    } catch (...) {
+        cout << "Test_14\t->\tFAILED" << endl;
+    }
+	cout << "Test_14\t->\tPASSED" << endl;
+
+	check_copy_constructor_2(*b3);
+
+	try {
+        b3->search(*b1);
+    } catch (...) {
+        cout << "Test_15\t->\tFAILED" << endl;
+    }
+	cout << "Test_15\t->\tPASSED" << endl;
+
+	try {
+        b3->search(*b2);
+    } catch (...) {
+        cout << "Test_16\t->\tFAILED" << endl;
+    }
+	cout << "Test_16\t->\tPASSED" << endl;
+
+	/*try {
+        b3->delete_from_btree(*b1);
+    } catch (...) {
+        cout << "Test_17\t->\tFAILED" << endl;
+    }
+	cout << "Test_17\t->\tPASSED" << endl;
+
+	try {
+        b3->delete_from_btree(*b2);
+    } catch (...) {
+        cout << "Test_18\t->\tFAILED" << endl;
+    }
+	cout << "Test_18\t->\tPASSED" << endl;*/
+
     delete b1;
-    delete b2;
+	delete b2;
+	delete b3;
     return 0;
 }
